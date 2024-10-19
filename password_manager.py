@@ -27,3 +27,23 @@ def login():
     else:
         messagebox.showerror("Error", "Invalid username or password.")
     
+#main window layout
+def main():
+    root = tk.Tk()
+    root.title("Password Manager")
+    root.geometry("400x400")
+    root.config(bg="black")
+
+    title = tk.Label(root, text="Password Manager", font=("Times New", 22, "bold"), bg="black", fg="white")
+    title.pack(pady=30)
+
+    button_style = {"font": ("Arial", 14), "bg": "dark slate blue", "fg": "white", "activebackground": "grey", "activeforeground": "red"}
+    
+    tk.Button(root, text="Create Account", command=create_account, **button_style).pack(pady=25)
+    tk.Button(root, text="Login", command=login, **button_style).pack(pady=25)
+    tk.Button(root, text="Exit", command=root.quit, **button_style).pack(pady=25)
+
+    root.mainloop()
+
+if __name__ == "__main__":
+    main()
