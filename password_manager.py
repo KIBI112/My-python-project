@@ -2,9 +2,9 @@ import hashlib
 import getpass
 import tkinter as tk
 from tkinter import messagebox, simpledialog
-import sys
 import unittest
 from unittest.mock import patch
+import sys
 
 password_manager = {}
 #creat account
@@ -48,7 +48,59 @@ def main():
 
     root.mainloop()
 
+#Unittest
+class TestPasswordManager(unittest.TestCase):
 
+    def setUp(self):
+        # Reset the password manager before each test
+        global password_manager
+        password_manager = {}
+
+    @patch('__main__.simpledialog.askstring', side_effect=["testuser", "password123"])
+    @patch('__main__.messagebox.showinfo')
+    def test_create_account_success(self, mock_messagebox, mock_input):
+        create_account()
+        hashed_password = hashlib.sha256("password123".encode()).hexdigest()
+
+        self.assertIn("testuser", password_manager)
+        self.assertEqual(password_manager["testuser"], hashed_password)
+        mock_messagebox.assert_called_with("Success", "Account has been created successfully!")
+
+    @patch('__main__.simpledialog.askstring', side_effect=["", "password123"])
+    @patch('__main__.messagebox.showwarning')
+    def test_create_account_empty_username(self, mock_messagebox, mock_input):
+        create_account()
+        self.assertNotIn("", password_manager)
+        mock_messagebox.assert_called_with("Error", "Username or password cannot be empty.")
+
+    @patch('__main__.simpledialog.askstring', side_effect=["testuser", "password123"])
+    @patch('__main__.messagebox.showinfo')
+    def test_login_success(self, mock_messagebox, mock_input):
+        hashed_password = hashlib.sha256("password123".encode()).hexdigest()
+        password_manager["testuser"] = hashed_password
+
+        login()
+        mock_messagebox.assert_called_with("Login", "Login successful!")
+
+    @patch('__main__.simpledialog.askstring', side_effect=["testuser", "wrongpassword"])
+    @patch('__main__.messagebox.showerror')
+    def test_login_invalid_password(self, mock_messagebox, mock_input):
+        hashed_password = hashlib.sha256("password123".encode()).hexdigest()
+        password_manager["testuser"] = hashed_password
+
+        login()
+        mock_messagebox.assert_called_with("Error", "Invalid username or password.")
+
+    @patch('__main__.simpledialog.askstring', side_effect=["unknownuser", "password123"])
+    @patch('__main__.messagebox.showerror')
+    def test_login_invalid_username(self, mock_messagebox, mock_input):
+        login()
+        mock_messagebox.assert_called_with("Error", "Invalid username or password.")
 
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) > 1 and sys.argv[1] == "test":
+        # Run the unit tests if "test" argument is passed
+        unittest.main(argv=[sys.argv[0]], exit=False)
+    else:
+        # Launch the GUI
+        main()
