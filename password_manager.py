@@ -2,6 +2,9 @@ import hashlib
 import getpass
 import tkinter as tk
 from tkinter import messagebox, simpledialog
+import sys
+import unittest
+from unittest.mock import patch
 
 password_manager = {}
 #creat account
@@ -44,6 +47,8 @@ def main():
     tk.Button(root, text="Exit", command=root.quit, **button_style).pack(pady=25)
 
     root.mainloop()
+
+
 
 if __name__ == "__main__":
     main()
