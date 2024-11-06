@@ -1,2 +1,4 @@
-tk
-unittest
+tkinter==0.1.0
+getpass==0.1.0
+hashlib==0.1.0
+unittest==0.1.0
